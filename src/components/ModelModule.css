@@ -1,0 +1,15 @@
+.model-module {
+  padding: 10px 15px;
+  background-color: var(--color-bg-light);
+  color: var(--color-text-light);
+  border: 1px solid var(--color-primary);
+  border-radius: 8px;
+  cursor: grab;
+  text-align: center;
+  user-select: none;
+  margin:5px;
+}
+
+.model-module:hover {
+  background-color: #4A0078;
+}

@@ -1,0 +1,16 @@
+/* src/theme.css */
+:root {
+  --color-bg-dark: #1E002E;
+  --color-bg-medium: #2A0036;
+  --color-bg-light: #3D004F;
+  --color-primary: #8A2BE2;
+  --color-accent: #FF007C;
+  --color-text-light: #FFFFFF;
+  --color-text-dark: #000000;
+
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+}

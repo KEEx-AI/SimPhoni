@@ -1,0 +1,62 @@
+/* src/components/SummarizationAndPromptPanel.css */
+
+.summarization-prompt-panel {
+  flex:1;
+  padding:20px;
+  color:var(--color-text-light);
+  background:var(--color-bg-medium);
+  border-right:2px solid var(--color-primary);
+  overflow-y:auto;
+  transition:opacity 0.5s ease;
+  opacity:0.8; /* less visible initially if needed */
+}
+
+.summarization-prompt-panel.fully-visible {
+  opacity:1;
+}
+
+.summarization-prompt-panel h4 {
+  margin-top:0;
+  border-bottom:2px solid var(--color-accent);
+  padding-bottom:5px;
+  color:#fff;
+}
+
+.sp-outputs-list {
+  margin-top:20px;
+}
+
+.sp-output-entry {
+  margin-bottom:10px;
+  background:var(--color-bg-light);
+  border:1px solid var(--color-primary);
+  border-radius:4px;
+  color:#fff;
+  font-size:12px;
+  overflow:hidden;
+}
+
+.sp-output-header {
+  padding:8px;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+}
+
+.toggle-arrow {
+  margin-right:5px;
+}
+
+.sp-output-content {
+  padding:8px;
+  border-top:1px solid var(--color-primary);
+  background:var(--color-bg-medium);
+  margin-top:5px;
+}
+
+.sp-output-content pre {
+  white-space:pre-wrap;
+  word-break:break-word;
+  margin:0;
+  color:#ccc;
+}

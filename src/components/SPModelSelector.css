@@ -1,0 +1,24 @@
+.sp-model-selector ul {
+  list-style:none;
+  padding:0;
+  margin:0;
+}
+
+.sp-model-selector li {
+  background:var(--color-bg-light);
+  margin-bottom:8px;
+  padding:8px;
+  border:1px solid var(--color-primary);
+  border-radius:4px;
+  cursor:pointer;
+}
+
+.sp-model-selector li:hover {
+  background:#4A0078;
+}
+
+.sp-model-selector li.selected {
+  background: var(--color-accent);
+  color:#fff;
+  font-weight:bold;
+}

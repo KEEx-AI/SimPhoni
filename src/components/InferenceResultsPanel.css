@@ -1,0 +1,20 @@
+/* src/components/InferenceResultsPanel.css */
+.inference-results-panel {
+  background: var(--color-bg-medium);
+  color: var(--color-text-light);
+  padding:20px;
+  border:2px solid var(--color-primary);
+  border-radius:8px;
+  font-family:Arial,sans-serif;
+}
+
+.inference-results-panel h4 {
+  margin-top:0;
+  border-bottom:2px solid var(--color-accent);
+  padding-bottom:5px;
+}
+
+.inference-results-panel ul {
+  list-style: disc;
+  padding-left:20px;
+}

@@ -1,0 +1,94 @@
+/* src/components/ISThread.css */
+
+.is-thread-layout {
+  display:flex;
+  min-height:100vh;
+  background:var(--color-bg-dark);
+  color:var(--color-text-light);
+  position:relative;
+  overflow:hidden;
+}
+
+.left-panel {
+  width:300px;
+  background:var(--color-bg-medium);
+  border-right:2px solid var(--color-primary);
+  display:flex;
+  flex-direction:column;
+  overflow-y:auto;
+}
+
+.is-thread-main {
+  flex:1;
+  padding:20px;
+  display:flex;
+  flex-direction:column;
+  gap:20px;
+  background:var(--color-bg-dark);
+}
+
+.thread-header {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+.thread-controls {
+  display:flex;
+  gap:10px;
+}
+
+.terminate-button, .save-button {
+  padding:10px;
+  background:#1e90ff;
+  border:none;
+  border-radius:5px;
+  color:#fff;
+  cursor:pointer;
+  font-size:14px;
+}
+
+.terminate-button:hover, .save-button:hover {
+  background:#0f78d1;
+}
+
+.thread-results {
+  background:var(--color-bg-medium);
+  border:2px solid var(--color-primary);
+  border-radius:8px;
+  padding:20px;
+  flex:1;
+  overflow-y:auto;
+  position:relative;
+}
+
+.error-message {
+  color:#FF007C;
+  font-weight:bold;
+  margin-bottom:10px;
+}
+
+.result-line {
+  background:var(--color-bg-light);
+  padding:10px;
+  border-radius:4px;
+  margin-bottom:10px;
+  white-space:pre-wrap;
+  word-break:break-word;
+  color:#fff;
+}
+
+.info-message {
+  color:#fff;
+  font-style:italic;
+  text-align:center;
+}
+
+.fade-in {
+  opacity:0;
+  animation:fadeinAnim 0.5s forwards;
+}
+
+@keyframes fadeinAnim {
+  to {opacity:1;}
+}

@@ -1,0 +1,105 @@
+/* PersonaLine.css */
+
+.persona-line {
+  display: flex;
+  align-items: center;
+  padding: 15px;
+  margin: 10px 30px;
+  border: 1px solid var(--color-primary);
+  border-radius: 8px;
+  color: var(--color-text-light);
+  background: var(--color-bg-medium);
+  transition: background 0.3s ease, box-shadow 0.3s ease;
+}
+
+.persona-line:hover {
+  background: var(--color-bg-light);
+  box-shadow: 0 0 10px rgba(0,0,0,0.5);
+}
+
+.nickname-input,
+.define-persona-input {
+  background: var(--color-bg-dark);
+  border: 1px solid var(--color-primary);
+  color: var(--color-text-light);
+  border-radius: 4px;
+  padding: 8px 10px;
+  margin-right: 10px;
+  font-size: 14px;
+  transition: border-color 0.3s ease;
+}
+
+/* Double width for persona definition fields */
+.define-persona-input {
+  width: 600px;
+}
+
+.nickname-input {
+  width: 150px;
+}
+
+.nickname-input:focus,
+.define-persona-input:focus {
+  border-color: var(--color-accent);
+  outline: none;
+}
+
+.model-display {
+  min-width: 150px;
+  text-align: center;
+  margin-right: 10px;
+  background: var(--color-bg-dark);
+  padding: 8px;
+  border: 1px solid var(--color-primary);
+  border-radius: 5px;
+  color: #fff;
+  font-size: 14px;
+}
+
+.creativity-slider {
+  display: flex;
+  align-items: center;
+  margin-right: 10px;
+  color: #fff;
+  font-size: 14px;
+}
+
+.creativity-slider label {
+  margin-right: 5px;
+  font-weight: bold;
+  color: var(--color-accent);
+}
+
+.creativity-slider input[type=range] {
+  margin: 0 5px;
+  cursor: pointer;
+  width: 100px;
+}
+
+.save-persona-button,
+.remove-persona-button {
+  padding: 8px 12px;
+  margin-left: 5px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  color: #fff;
+  font-size: 14px;
+  transition: background 0.3s ease, transform 0.1s ease;
+}
+
+.save-persona-button {
+  background-color: #17a2b8;
+}
+.save-persona-button:hover {
+  background-color: #138496;
+  transform: scale(1.03);
+}
+
+.remove-persona-button {
+  background-color: #dc3545;
+}
+.remove-persona-button:hover {
+  background-color: #c82333;
+  transform: scale(1.03);
+}

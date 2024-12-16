@@ -1,0 +1,91 @@
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 40px;
+  background: #2A0036; /* deep purple background */
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  color: #ffffff;
+}
+
+.logo-image {
+  height: 48px;
+  margin-right: 15px;
+}
+
+.navbar-center .nav-item {
+  font-size: 18px;
+  margin: 0 15px;
+  color: #FFFFFF;
+  text-decoration: none;
+  transition: color 0.3s;
+}
+
+.navbar-center .nav-item:hover {
+  color: #FF007C; /* hot pink highlight */
+}
+
+.active-nav-item {
+  color: #FFD700; /* gold color for active link */
+  font-weight: bold;
+}
+
+.navbar-right {
+  display: flex;
+  align-items: center;
+}
+
+.profile-icon {
+  color: #8A2BE2;
+  margin-right: 15px;
+}
+
+.logout-button {
+  background-color: #FF007C;
+  border: none;
+  color: #FFFFFF;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.auth-link {
+  margin: 0 10px;
+  color: #FFFFFF;
+  text-decoration: none;
+  font-size: 16px;
+}
+
+.auth-link:hover {
+  color: #FF007C;
+}
+
+.app-title {
+  font-size:44px;
+  font-weight:bold;
+  color:#FFFFFF;
+  position:relative;
+}
+
+.i-dot {
+  position:relative;
+  display:inline-block;
+  margin-left:-2px;
+}
+
+.i-dot::after {
+  content:'';
+  width:8px;
+  height:8px;
+  background:#8A2BE2; /* Light purple circle */
+  border-radius:50%;
+  position:absolute;
+  bottom:3px;
+  left:50%;
+  transform:translateX(-50%);
+}

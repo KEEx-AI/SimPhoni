@@ -1,0 +1,50 @@
+/* src/components/ModelSelector.css */
+.model-selector-advanced {
+  background: var(--color-bg-medium, #2A0036);
+  color: var(--color-text-light, #FFFFFF);
+  border: 2px solid var(--color-primary, #8A2BE2);
+  border-radius: 8px;
+  padding: 20px;
+  max-width: 300px;
+}
+
+.model-selector-advanced h4 {
+  margin-top: 0;
+  margin-bottom: 10px;
+  border-bottom: 2px solid var(--color-accent, #FF007C);
+  padding-bottom: 5px;
+}
+
+.model-search {
+  width: 100%;
+  padding: 8px;
+  background: var(--color-bg-light, #3D004F);
+  border: 1px solid var(--color-primary, #8A2BE2);
+  color: #FFFFFF;
+  border-radius: 5px;
+  margin-bottom: 15px;
+}
+
+.model-list {
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.model-option {
+  padding: 10px;
+  background: var(--color-bg-light, #3D004F);
+  border: 1px solid var(--color-primary, #8A2BE2);
+  border-radius: 5px;
+  margin-bottom: 5px;
+  cursor: pointer;
+}
+
+.model-option:hover {
+  background-color: #4A0078;
+}
+
+.model-option.selected {
+  background-color: var(--color-accent, #FF007C);
+  color: #FFFFFF;
+  font-weight: bold;
+}

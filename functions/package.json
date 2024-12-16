@@ -1,0 +1,15 @@
+{
+  "name": "functions",
+  "description": "Firebase Functions",
+  "dependencies": {
+    "firebase-admin": "^13.0.1",
+    "firebase-functions": "^6.1.2"
+  },
+  "engines": {
+    "node": "18"
+  },
+  "scripts": {
+    "lint": "echo \"No lint configured\""
+  },
+  "private": true
+}

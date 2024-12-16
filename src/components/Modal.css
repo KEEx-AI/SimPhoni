@@ -1,0 +1,47 @@
+/* src/components/Modal.css */
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right:0;
+  bottom:0;
+  background: rgba(0,0,0,0.5);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:9999;
+}
+
+.modal-content {
+  background: var(--color-bg-medium, #2A0036);
+  color: var(--color-text-light, #fff);
+  padding: 20px;
+  border: 2px solid var(--color-primary, #8A2BE2);
+  border-radius:8px;
+  width:300px;
+  max-width:90%;
+}
+
+.modal-content h3 {
+  margin-top:0;
+  border-bottom:2px solid var(--color-accent, #FF007C);
+  padding-bottom:5px;
+}
+
+.modal-actions {
+  margin-top:20px;
+  text-align:right;
+}
+
+.close-button {
+  background:#FF007C;
+  border:none;
+  color:#fff;
+  padding:8px 12px;
+  border-radius:4px;
+  margin-left:5px;
+}
+
+.close-button:hover {
+  background:#e6006c;
+}

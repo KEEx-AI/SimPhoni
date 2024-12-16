@@ -1,0 +1,28 @@
+/* src/components/PersonaArrayManager.css */
+.persona-array-manager {
+  background: var(--color-bg-medium);
+  padding:20px;
+  border:2px solid var(--color-primary);
+  border-radius:8px;
+  color: var(--color-text-light);
+  font-family:Arial,sans-serif;
+}
+
+.persona-array-manager h4 {
+  margin-top:0;
+  border-bottom:2px solid var(--color-accent);
+  padding-bottom:5px;
+}
+
+.persona-array-manager ul {
+  list-style:none;
+  padding:0;
+  margin-top:10px;
+}
+
+.persona-array-manager li {
+  background:var(--color-bg-light);
+  margin-bottom:8px;
+  padding:8px;
+  border-radius:4px;
+}
