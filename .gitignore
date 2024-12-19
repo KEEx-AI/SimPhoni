@@ -5,3 +5,4 @@ build
 .firebase/
 functions/node_modules/
 SimPhoni-KEEx/
+gcloud --version/
