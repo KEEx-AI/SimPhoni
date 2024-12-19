@@ -14,7 +14,7 @@
 }
 
 .logo-image {
-  height: 48px;
+  height: 84px;
   margin-right: 15px;
 }
 
@@ -80,12 +80,12 @@
 
 .i-dot::after {
   content:'';
-  width:8px;
-  height:8px;
-  background:#8A2BE2; /* Light purple circle */
+  width:14px;
+  height:14px;
+  background:#E040FF; /* Light purple circle */
   border-radius:50%;
   position:absolute;
-  bottom:3px;
+  bottom:46px;
   left:50%;
   transform:translateX(-50%);
 }

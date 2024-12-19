@@ -1,5 +1,5 @@
 // src/components/PersonaSetup.js
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect, useCallback } from 'react';
 import './PersonaSetup.css';
 import HeaderButtons from './HeaderButtons';
 import PersonaLine from './PersonaLine';
@@ -11,17 +11,13 @@ import LoadingIndicator from './LoadingIndicator';
 import ModelModule from './ModelModule';
 
 function PersonaSetup() {
-  const { personas, setPersonas, arrayName, setArrayName } = useAppData();
+  const { personas, setPersonas, arrayName, setArrayName, addUserSchema } = useAppData();
   const navigate = useNavigate();
   const fileInputRef = useRef(null);
   const [showModal, setShowModal] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-  if (personas.length === 0) {
-    initializePersonas();
-  }
-
-  function initializePersonas() {
+  const initializePersonas = useCallback(() => {
     const initial = Array.from({ length: 9 }, (_, i) => ({
       id: `${Date.now()}_${i}`,
       nickname: '',
@@ -30,7 +26,13 @@ function PersonaSetup() {
       definePersona: ''
     }));
     setPersonas(initial);
-  }
+  }, [setPersonas]);
+
+  useEffect(() => {
+    if (personas.length === 0) {
+      initializePersonas();
+    }
+  }, [personas, initializePersonas]);
 
   const updatePersona = (index, updated) => {
     const newPs = [...personas];
@@ -50,20 +52,59 @@ function PersonaSetup() {
     setPersonas(newPs);
   };
 
-  const savePersonaArray = () => {
+  const clearAll = () => {
+    setArrayName('');
+    initializePersonas();
+  };
+
+  const saveInstructSchema = () => {
     if (!arrayName.trim()) {
-      alert('Please enter a name for the persona array before saving.');
+      alert('Please enter a name before saving the IS Schema.');
       return;
     }
-    const data = { arrayName, personas };
-    const blob = new Blob([JSON.stringify(data, null, 2)], {type:'application/json'});
+
+    const data = {
+      personaArray: {
+        arrayName,
+        personas: personas.map(p => ({
+          nickname: p.nickname,
+          model: p.model,
+          creativity: p.creativity,
+          definePersona: p.definePersona
+        }))
+      },
+      instructLines: []
+    };
+
+    addUserSchema(data);
+
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.download = `persona-array-${arrayName}.json`;
+    link.download = `${arrayName || 'Unnamed'}-ISSchema.json`;
     link.click();
     URL.revokeObjectURL(url);
+    alert('IS Schema saved to your My Schemas list.');
   };
+
+  const startSetup = () => {
+    if (!arrayName.trim()) {
+      alert('Please enter a name before continuing.');
+      return;
+    }
+    setShowModal(true);
+  };
+
+  const confirmNavigate = async () => {
+    setShowModal(false);
+    setIsLoading(true);
+    await new Promise(res => setTimeout(res, 500));
+    setIsLoading(false);
+    navigate('/is-setup');
+  };
+
+  const triggerFileInput = () => fileInputRef.current.click();
 
   const loadPersonaArray = (e) => {
     const file = e.target.files[0];
@@ -85,37 +126,14 @@ function PersonaSetup() {
     reader.readAsText(file);
   };
 
-  const triggerFileInput = () => fileInputRef.current.click();
-
-  const startSetup = () => {
-    if (!arrayName.trim()) {
-      alert('Please enter a name before continuing.');
-      return;
-    }
-    setShowModal(true);
-  };
-
-  const confirmNavigate = async () => {
-    setShowModal(false);
-    setIsLoading(true);
-    await new Promise(res => setTimeout(res, 500));
-    setIsLoading(false);
-    navigate('/is-setup');
-  };
-
-  const clearAll = () => {
-    setArrayName('');
-    initializePersonas();
-  };
-
   return (
     <div className="persona-setup-container">
       {isLoading && <LoadingIndicator message="Preparing IS Setup..." />}
       <HeaderButtons
         mainButtonLabel="CONTINUE TO INSTRUCT SETUP"
         mainButtonColor="#1E90FF"
-        secondaryButtonLabel="SAVE PERSONA ARRAY"
-        onSecondaryButtonClick={savePersonaArray}
+        secondaryButtonLabel="SAVE IS SCHEMA"
+        onSecondaryButtonClick={saveInstructSchema}
         setCurrentPage={startSetup}
         pageTitle="Persona Array"
       />
@@ -131,8 +149,9 @@ function PersonaSetup() {
         />
       </div>
       <div className="save-load-buttons">
-        <button onClick={savePersonaArray} className="save-button">Save Persona Array</button>
-        <button onClick={triggerFileInput} className="load-button">Load Persona Array</button>
+        {/* Remove 'Save Persona Array' and 'Load Persona Array' if not needed */}
+        {/* <button onClick={savePersonaArray} className="save-button">Save Persona Array</button>
+        <button onClick={triggerFileInput} className="load-button">Load Persona Array</button> */}
         <input
           type="file"
           accept="application/json"

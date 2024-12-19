@@ -3,96 +3,87 @@ import React, { useState, useEffect, useRef } from 'react';
 import './ISThread.css';
 import HeaderButtons from './HeaderButtons';
 import { useAppData } from '../context/AppContext';
-import { processAllInstructLines, processInstructLine } from '../services/OllamaService';
-import SummarizationAndPromptPanel from './SummarizationAndPromptPanel';
+import { processInstructLine } from '../services/OllamaService';
 import { saveTextFile } from '../services/FileService';
 
 function ISThread() {
-  const { instructLines, selectedSPModel } = useAppData();
-  const [spOutputs, setSpOutputs] = useState([]); // Each instruct line's S&P output is one element
-  const [inferenceOutputs, setInferenceOutputs] = useState([]); // Each instruct line's main output is one element
+  const { instructLines = [], selectedSPModel } = useAppData();
   const [errorMessage, setErrorMessage] = useState(null);
   const [isRunning, setIsRunning] = useState(false);
   const abortControllerRef = useRef(null);
 
-  const currentInstructIndex = useRef(0);
-  const currentPhase = useRef('SP'); // 'SP' or 'MAIN'
+  const [entries, setEntries] = useState([]);
 
   useEffect(() => {
     if (instructLines.length > 0) {
       startSequence();
     }
-  // eslint-disable-next-line
+    // eslint-disable-next-line
   }, [instructLines]);
 
   async function startSequence() {
     setIsRunning(true);
     setErrorMessage(null);
-    setSpOutputs([]);
-    setInferenceOutputs([]);
+    setEntries([]);
     abortControllerRef.current = new AbortController();
 
     try {
-      await processInstructLinesSequential();
+      for (let i = 0; i < instructLines.length; i++) {
+        await processSingleInstructLine(instructLines[i], i);
+      }
     } catch (error) {
       setErrorMessage(error.message || 'Error during inference');
     }
     setIsRunning(false);
   }
 
-  async function processInstructLinesSequential() {
-    for (let i=0; i<instructLines.length; i++) {
-      await processSingleInstructLine(instructLines[i]);
-    }
-  }
-
-  // For each instruct line:
-  // 1. Add a new empty S&P output string
-  // 2. Type out S&P output chars
-  // 3. Once S&P done, add main output string and type it out
-  async function processSingleInstructLine(line) {
-    // Add empty entries
-    setSpOutputs(prev => [...prev, '']);
-    setInferenceOutputs(prev => [...prev, '']);
-
-    const instructIndex = spOutputs.length; // since we just added one
-    // We'll return promises from processInstructLine
+  async function processSingleInstructLine(line, lineIndex) {
+    setEntries(prev => [...prev, { type: 'sp', text: '', expanded: true, lineIndex }]);
 
     await processInstructLine(
       selectedSPModel,
       line,
       abortControllerRef.current.signal,
-      (ch) => onSPChar(instructIndex, ch),
-      () => onSPDone(instructIndex),
-      (ch) => onMainChar(instructIndex, ch),
-      () => onMainDone(instructIndex)
+      (ch) => onSPChar(lineIndex, ch),
+      () => onSPDone(lineIndex),
+      (ch) => onMainChar(lineIndex, ch),
+      () => onMainDone(lineIndex)
     );
   }
 
-  const onSPChar = (index, ch) => {
-    setSpOutputs(prev => {
+  const onSPChar = (lineIndex, ch) => {
+    setEntries(prev => {
       const newArr = [...prev];
-      newArr[index] = newArr[index] + ch;
+      const spIndex = newArr.findIndex(e => e.type === 'sp' && e.lineIndex === lineIndex);
+      if (spIndex > -1) {
+        newArr[spIndex].text += ch;
+      }
       return newArr;
     });
   };
 
-  const onSPDone = (index) => {
-    // S&P done for this instruct line
-    // Just finalize, no special action needed
+  const onSPDone = (lineIndex) => {
+    // no immediate action
   };
 
-  const onMainChar = (index, ch) => {
-    setInferenceOutputs(prev => {
+  const onMainChar = (lineIndex, ch) => {
+    setEntries(prev => {
       const newArr = [...prev];
-      newArr[index] = newArr[index] + ch;
+      let mainIndex = newArr.findIndex(e => e.type === 'main' && e.lineIndex === lineIndex);
+      if (mainIndex === -1) {
+        newArr.push({ type: 'main', text: '', lineIndex });
+        mainIndex = newArr.length - 1;
+        // collapse SP
+        const spIndex = newArr.findIndex(e => e.type === 'sp' && e.lineIndex === lineIndex);
+        if (spIndex > -1) newArr[spIndex].expanded = false;
+      }
+      newArr[mainIndex].text += ch;
       return newArr;
     });
   };
 
-  const onMainDone = (index) => {
-    // main done for this instruct line
-    // move on to next line handled in the loop
+  const onMainDone = (lineIndex) => {
+    // done main
   };
 
   const reRunSequence = () => {
@@ -102,59 +93,84 @@ function ISThread() {
   const terminateSequence = () => {
     if (abortControllerRef.current) {
       abortControllerRef.current.abort();
-      setInferenceOutputs(prev => [...prev, '(Terminated by user)']);
+      setEntries(prev => [...prev, { type: 'main', text: '(Terminated by user)', lineIndex: 9999 }]);
     }
   };
 
   const saveInferenceSequence = async () => {
+    let spCounter = 1;
+    let mainCounter = 1;
     let spText = '';
-    spOutputs.forEach((o,i) => {
-      spText += `[S&P Entry ${i+1}]\n${o}\n`
-    });
     let mainText = '';
-    inferenceOutputs.forEach((o,i) => {
-      mainText += `[Inference Output ${i+1}]\n${o}\n`;
+    entries.forEach(e => {
+      if (e.type === 'sp') {
+        spText += `[S&P Entry ${spCounter++}]\n${e.text}\n`;
+      } else {
+        mainText += `[Inference Output ${mainCounter++}]\n${e.text}\n`;
+      }
     });
     const combined = `=== Summarization & Prompt Outputs ===\n${spText}\n=== Inference Outputs ===\n${mainText}\n`;
     await saveTextFile(combined, "InferenceSequence.txt");
   };
 
+  const toggleSP = (lineIndex) => {
+    setEntries(prev => {
+      const newArr = [...prev];
+      const spIndex = newArr.findIndex(e => e.type === 'sp' && e.lineIndex === lineIndex);
+      if (spIndex > -1) {
+        newArr[spIndex].expanded = !newArr[spIndex].expanded;
+      }
+      return newArr;
+    });
+  };
+
   return (
     <div className="is-thread-layout">
-      <div className="left-panel">
-        {/* Each instruct line's S&P is one box */}
-        <SummarizationAndPromptPanel spOutputs={spOutputs} />
-      </div>
-      <div className="is-thread-main">
-        <div className="thread-header">
-          <HeaderButtons
-            mainButtonLabel="RE-RUN SEQUENCE"
-            mainButtonColor="#FF007C"
-            onSecondaryButtonClick={()=>{}}
-            setCurrentPage={reRunSequence}
-            pageTitle="Inference Sequence"
-          />
-          <div className="thread-controls">
-            <button className="terminate-button" onClick={terminateSequence}>
-              Terminate Process
+      <div className="thread-header">
+        <HeaderButtons
+          mainButtonLabel="RE-RUN SEQUENCE"
+          mainButtonColor="#FF007C"
+          onSecondaryButtonClick={() => { }}
+          setCurrentPage={reRunSequence}
+          pageTitle="Inference Sequence"
+        />
+        <div className="thread-controls">
+          <button className="terminate-button" onClick={terminateSequence}>
+            Terminate Process
+          </button>
+          {!isRunning && entries.length > 0 && (
+            <button className="save-button" onClick={saveInferenceSequence}>
+              Save Inference Sequence
             </button>
-            {!isRunning && (spOutputs.length>0 || inferenceOutputs.length>0) && (
-              <button className="save-button" onClick={saveInferenceSequence}>
-                Save Inference Sequence
-              </button>
+          )}
+        </div>
+      </div>
+      <div className="thread-results">
+        {errorMessage && <div className="error-message">{errorMessage}</div>}
+        {isRunning && entries.length === 0 && (
+          <div className="info-message">Running Inference...</div>
+        )}
+        {entries.map((e, i) => (
+          <div key={i} className={`entry ${e.type}`}>
+            {e.type === 'sp' && (
+              <div className="sp-box">
+                <div className="sp-header" onClick={() => toggleSP(e.lineIndex)}>
+                  <span className="toggle-arrow" style={{ color: 'pink', cursor: 'pointer' }}>
+                    {e.expanded ? '▼' : '▶'}
+                  </span> S&P Entry {e.lineIndex + 1}
+                </div>
+                {e.expanded && (
+                  <div className="sp-content"><pre>{e.text}</pre></div>
+                )}
+              </div>
+            )}
+            {e.type === 'main' && (
+              <div className="main-box">
+                <pre>{e.text}</pre>
+              </div>
             )}
           </div>
-        </div>
-        <div className="thread-results">
-          {errorMessage && <div className="error-message">{errorMessage}</div>}
-          {isRunning && spOutputs.length===0 && inferenceOutputs.length===0 && (
-            <div className="info-message">Running Inference...</div>
-          )}
-          {/* Each instruct line's main output is one box */}
-          {inferenceOutputs.map((res, i) => (
-            <pre key={i} className="result-line fade-in">{res}</pre>
-          ))}
-        </div>
+        ))}
       </div>
     </div>
   );

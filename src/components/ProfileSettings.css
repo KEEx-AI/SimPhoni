@@ -1,0 +1,24 @@
+.profile-settings-container {
+  padding:20px 40px;
+  background:#1E002E;
+  color:#fff;
+  min-height:100vh;
+  font-family: Arial, sans-serif;
+}
+
+.profile-pic-section {
+  background:#2A0036;
+  border:1px solid #8A2BE2;
+  border-radius:8px;
+  padding:20px;
+  width:300px;
+}
+
+.profile-pic-preview {
+  display:block;
+  width:100px;
+  height:100px;
+  object-fit:cover;
+  border-radius:50%;
+  margin-bottom:10px;
+}

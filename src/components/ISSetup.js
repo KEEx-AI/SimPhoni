@@ -10,14 +10,21 @@ import PersonaModule from './PersonaModule';
 import { defaultSchema } from '../defaultSchema';
 
 function ISSetup() {
-  const { personas, setPersonas, arrayName, setArrayName, instructLines, setInstructLines } = useAppData();
+  const {
+    personas=[],
+    setPersonas,
+    arrayName='',
+    setArrayName,
+    instructLines=[],
+    setInstructLines,
+    addUserSchema
+  } = useAppData();
   const [localInstructLines, setLocalInstructLines] = useState(instructLines || []);
   const fileInputRef = useRef(null);
   const navigate = useNavigate();
 
   useEffect(() => {
-    // On first visit after login: if no arrayName and no instructLines, load defaultSchema
-    if (!arrayName && (localInstructLines.length === 0) && personas.length === 0) {
+    if (!arrayName && localInstructLines.length === 0 && personas.length === 0) {
       loadDefaultSchema();
     }
   // eslint-disable-next-line
@@ -95,16 +102,8 @@ function ISSetup() {
         } : {})
       }))
     };
-
-    const blob = new Blob([JSON.stringify(data, null, 2)], {type:'application/json'});
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `${arrayName}-ISSchema.json`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
+    addUserSchema(data);
+    alert('IS Schema saved to your My Schemas!');
   };
 
   const loadSchemaFile = (e) => {
@@ -142,6 +141,13 @@ function ISSetup() {
     navigate('/is-thread');
   };
 
+  const clearAll = () => {
+    setArrayName('');
+    setPersonas([]);
+    setLocalInstructLines([]);
+    setInstructLines([]);
+  };
+
   const activePersonas = personas.filter(p => p.nickname || p.definePersona);
 
   return (
@@ -149,7 +155,7 @@ function ISSetup() {
       <HeaderButtons
         mainButtonLabel="START SEQUENCE"
         mainButtonColor="#FF007C"
-        secondaryButtonLabel="SAVE INSTRUCT SCHEMA"
+        secondaryButtonLabel="SAVE IS SCHEMA"
         onSecondaryButtonClick={saveInstructSchema}
         setCurrentPage={startSequence}
         pageTitle={`Instruct Sequence Setup - ${arrayName || 'No Array Loaded'}`}
@@ -165,6 +171,7 @@ function ISSetup() {
           onChange={loadSchemaFile}
           style={{ display: 'none' }}
         />
+        <button onClick={clearAll} className="load-schema-button">Clear All</button>
       </div>
 
       <div className="persona-modules">

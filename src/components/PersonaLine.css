@@ -1,41 +1,39 @@
-/* PersonaLine.css */
-
+/* src/components/PersonaLine.css */
 .persona-line {
   display: flex;
   align-items: center;
-  padding: 15px;
-  margin: 10px 30px;
+  padding: 4px 6px;
+  margin:0; /* rely on parent's spacing */
   border: 1px solid var(--color-primary);
   border-radius: 8px;
   color: var(--color-text-light);
   background: var(--color-bg-medium);
   transition: background 0.3s ease, box-shadow 0.3s ease;
+  gap: 8px;
 }
 
 .persona-line:hover {
   background: var(--color-bg-light);
-  box-shadow: 0 0 10px rgba(0,0,0,0.5);
+  box-shadow: 0 0 6px rgba(0,0,0,0.4);
 }
 
 .nickname-input,
 .define-persona-input {
   background: var(--color-bg-dark);
   border: 1px solid var(--color-primary);
-  color: var(--color-text-light);
+  color: #fff;
   border-radius: 4px;
-  padding: 8px 10px;
-  margin-right: 10px;
-  font-size: 14px;
-  transition: border-color 0.3s ease;
-}
-
-/* Double width for persona definition fields */
-.define-persona-input {
-  width: 600px;
+  padding: 4px 6px;
+  font-size: 13px;
+  line-height:1;
 }
 
 .nickname-input {
-  width: 150px;
+  width:90px;
+}
+
+.define-persona-input {
+  width: 220px;
 }
 
 .nickname-input:focus,
@@ -45,61 +43,68 @@
 }
 
 .model-display {
-  min-width: 150px;
+  min-width: 120px;
   text-align: center;
-  margin-right: 10px;
   background: var(--color-bg-dark);
-  padding: 8px;
-  border: 1px solid var(--color-primary);
-  border-radius: 5px;
-  color: #fff;
-  font-size: 14px;
+  padding:4px 6px;
+  border:1px solid var(--color-primary);
+  border-radius:5px;
+  font-size:13px;
+  line-height:1;
 }
 
 .creativity-slider {
-  display: flex;
-  align-items: center;
-  margin-right: 10px;
-  color: #fff;
-  font-size: 14px;
+  display:flex;
+  align-items:center;
+  font-size:13px;
+  color:#fff;
 }
 
 .creativity-slider label {
-  margin-right: 5px;
-  font-weight: bold;
-  color: var(--color-accent);
+  margin-right:3px;
+  font-weight:bold;
+  color:var(--color-accent);
 }
 
 .creativity-slider input[type=range] {
-  margin: 0 5px;
-  cursor: pointer;
-  width: 100px;
+  margin:0 3px;
+  cursor:pointer;
+  width:60px;
+  line-height:1;
 }
 
-.save-persona-button,
+.creativity-slider span {
+  font-size:13px;
+  line-height:1;
+}
+
+.tools-button {
+  padding:4px 8px;
+  background-color:#17a2b8;
+  border:none;
+  border-radius:4px;
+  cursor:pointer;
+  color:#fff;
+  font-size:13px;
+  line-height:1;
+  white-space:nowrap;
+}
+
+.tools-button:hover {
+  background-color:#138496;
+}
+
 .remove-persona-button {
-  padding: 8px 12px;
-  margin-left: 5px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  color: #fff;
-  font-size: 14px;
-  transition: background 0.3s ease, transform 0.1s ease;
+  padding:4px 8px;
+  border:none;
+  border-radius:4px;
+  cursor:pointer;
+  color:#fff;
+  background-color:#dc3545;
+  font-size:13px;
+  line-height:1;
 }
 
-.save-persona-button {
-  background-color: #17a2b8;
-}
-.save-persona-button:hover {
-  background-color: #138496;
-  transform: scale(1.03);
-}
-
-.remove-persona-button {
-  background-color: #dc3545;
-}
 .remove-persona-button:hover {
-  background-color: #c82333;
-  transform: scale(1.03);
+  background-color:#c82333;
 }

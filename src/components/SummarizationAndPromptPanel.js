@@ -23,4 +23,3 @@ function SummarizationAndPromptPanel({ spOutputs }) {
 }
 
 export default SummarizationAndPromptPanel;
-s

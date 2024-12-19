@@ -1,6 +1,8 @@
-node_modules
+node_modules/
 build
 .DS_Store
 .env
 .firebase/
-functions/node_modules
+functions/node_modules/
+SimPhoni-KEEx/
+gcloud --version/

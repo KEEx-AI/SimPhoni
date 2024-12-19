@@ -1,5 +1,5 @@
 // src/services/OllamaService.js
-import { checkLoopCondition, buildSPPrompt } from './SummarizationAndPromptService';
+import { buildSPPrompt } from './SummarizationAndPromptService';
 
 const baseURL = 'http://localhost:11434/api/generate';
 
@@ -26,7 +26,7 @@ async function* ollamaRunStream(model, prompt, signal) {
     const {value, done:streamDone} = await reader.read();
     if (streamDone) break;
     const chunk = decoder.decode(value);
-    const lines = chunk.split('\n').filter(l=>l.trim()!=='');
+    const lines = chunk.split('\n').filter(l => l.trim() !== '');
     for (const line of lines) {
       let obj;
       try {
@@ -40,7 +40,6 @@ async function* ollamaRunStream(model, prompt, signal) {
         errorMsg = obj.error;
       }
       if (obj.response) {
-        // yield partial text lines
         yield obj.response;
       }
       if (obj.done) {
@@ -55,32 +54,72 @@ async function* ollamaRunStream(model, prompt, signal) {
   }
 }
 
-export async function processInstructLine(spModel, line, signal, onSPChar, onSPDone, onMainChar, onMainDone) {
-  // 1. Run S&P model
+function personaStyle(personaNickname) {
+  if (!personaNickname) return '';
+  const styles = {
+    'Wizard': 'Use mystical metaphors and poetic language.',
+    'Engineer': 'Focus on technical details, step-by-step logic.',
+    'Scientist': 'Rely on data, evidence, and structured analysis.',
+    'Policy Maker': 'Emphasize policy frameworks, international cooperation.',
+    'Artist': 'Use creative and inspiring imagery.',
+    'Teacher': 'Explain concepts simply, educational tone.',
+    'Hero': 'Brave, action-oriented, solution-focused language.',
+    'Member': 'Advisory tone, balanced perspective.',
+  };
+  const keys = Object.keys(styles);
+  for (let k of keys) {
+    if (personaNickname && personaNickname.toLowerCase().includes(k.toLowerCase())) {
+      return styles[k];
+    }
+  }
+  return 'Speak with clarity and distinct personality.';
+}
+
+async function runOllamaCommand(model, command, signal) {
+  // Simple function to run a single command like "/clear"
+  for await (const _ of ollamaRunStream(model, command, signal)) {
+    // We don't expect output from /clear, but if it does respond, ignore.
+  }
+}
+
+export async function processInstructLine(
+  spModel,
+  line,
+  signal,
+  onSPChar,
+  onSPDone,
+  onMainChar,
+  onMainDone
+) {
+  const personaDescriptor = personaStyle(line.persona);
   const spPrompt = buildSPPrompt({
-    biggerPlan:"Larger plan context placeholder...",
-    threadSummary:"Thread summary placeholder...",
-    userInstructions: line.instructText
+    biggerPlan:"Larger plan context placeholder: Always remember we have a multi-step process and we must keep continuity.",
+    threadSummary:"Thread summary placeholder: Summarize what has happened so far, focusing on relevant context.",
+    userInstructions: `Persona ${line.persona} instructions: ${line.instructText}\nPersona Style: ${personaDescriptor}`
   });
 
+  // Stream S&P
   for await (const spLine of ollamaRunStream(spModel, spPrompt, signal)) {
-    // spLine is a chunk of text
-    // Add characters one by one
     for (const ch of spLine) {
       onSPChar(ch);
     }
   }
   onSPDone();
 
-  // 2. Determine model
   const chosenModel = await deriveModelFromPersona(line.persona);
-  // Add a header line first?
-  const header = `[Inference(${chosenModel})]:\n`;
-  for (const ch of header) {
+
+  // Clear context before main inference
+  await runOllamaCommand(chosenModel, "/clear", signal);
+
+  const personaLabel = `[Inference(${line.persona}:${chosenModel})]:\n`;
+  for (const ch of personaLabel) {
     onMainChar(ch);
   }
 
-  for await (const mainLine of ollamaRunStream(chosenModel, spPrompt, signal)) {
+  // Main prompt with persona style
+  const mainPrompt = `${spPrompt}\n\nNow ${line.persona} responds using their unique style:\n${personaDescriptor}\nUser Instructions:${line.instructText}`;
+
+  for await (const mainLine of ollamaRunStream(chosenModel, mainPrompt, signal)) {
     for (const ch of mainLine) {
       onMainChar(ch);
     }
@@ -89,29 +128,9 @@ export async function processInstructLine(spModel, line, signal, onSPChar, onSPD
 }
 
 async function deriveModelFromPersona(personaNickname) {
-  if (personaNickname === 'Wizard') return 'phi3:14b-medium-128k-instruct-fp16';
-  if (personaNickname === 'Engineer') return 'llama3.2:3b';
-  return 'llama3.2:3b';
+  return "llama3.2:3b";
 }
 
-export async function processAllInstructLines(lines, spModel, signal, onSPChar, onSPDone, onMainChar, onMainDone) {
-  // This is a helper if needed, but we'll handle iteration in ISThread.js
-  for (const line of lines) {
-    if (line.type === 'instruct') {
-      await processInstructLine(spModel, line, signal, onSPChar, onSPDone, onMainChar, onMainDone);
-    } else if (line.type === 'loop') {
-      if (line.mode === 'count') {
-        for (let i=0; i<line.iterations; i++) {
-          await processAllInstructLines(line.instructLines, spModel, signal, onSPChar, onSPDone, onMainChar, onMainDone);
-        }
-      } else {
-        let continueLoop = true;
-        while (continueLoop) {
-          await processAllInstructLines(line.instructLines, spModel, signal, onSPChar, onSPDone, onMainChar, onMainDone);
-          continueLoop = await checkLoopCondition("condition prompt here", spModel);
-          if (!continueLoop) break;
-        }
-      }
-    }
-  }
+export async function checkLoopCondition() {
+  return false;
 }

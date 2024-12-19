@@ -1,64 +1,89 @@
 // src/components/PersonaLine.js
-import React, { useState } from 'react';
-import { useDrop } from 'react-dnd';
+import React, { useRef } from 'react';
 import './PersonaLine.css';
+import { useDrop } from 'react-dnd';
 
 function PersonaLine({ index, persona, updatePersona, removePersona }) {
-  const [nickname, setNickname] = useState(persona.nickname);
-  const [creativity, setCreativity] = useState(persona.creativity);
-  const [model, setModel] = useState(persona.model);
-  const [definePersona, setDefinePersona] = useState(persona.definePersona);
+  const fileInputRef = useRef(null);
 
   const [{ isOver }, drop] = useDrop(() => ({
     accept: 'MODEL',
     drop: (item) => {
-      setModel(item.model.name);
       updatePersona(index, { model: item.model.name });
     },
     collect: (monitor) => ({
       isOver: !!monitor.isOver(),
     })
-  }), [setModel, updatePersona, index]);
+  }), [updatePersona, index]);
 
-  const savePersona = () => {
-    updatePersona(index, { nickname, creativity, definePersona });
+  const handleNicknameChange = (e) => {
+    updatePersona(index, { nickname: e.target.value });
+  };
+
+  const handleCreativityChange = (e) => {
+    const val = parseInt(e.target.value, 10);
+    updatePersona(index, { creativity: val });
+  };
+
+  const handleDefinePersonaChange = (e) => {
+    updatePersona(index, { definePersona: e.target.value });
+  };
+
+  const triggerAudioTranscription = () => {
+    fileInputRef.current.click();
+  };
+
+  const handleAudioFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      console.log('Selected audio file for transcription:', file);
+      // Integrate the transcription logic as needed, store output in persona's data
+    }
   };
 
   return (
     <div className="persona-line" ref={drop} style={{ backgroundColor: isOver ? '#4A0078' : 'var(--color-bg-medium)' }}>
       <input
         type="text"
-        value={nickname}
-        onChange={(e) => setNickname(e.target.value)}
+        value={persona.nickname}
+        onChange={handleNicknameChange}
         placeholder="Nickname"
         className="nickname-input"
       />
+
       <div className="model-display">
-        {model || 'Drag a model here'}
+        {persona.model || 'Drag a model here'}
       </div>
+
       <div className="creativity-slider">
         <label>Creativity:</label>
         <input
           type="range"
           min="1"
           max="9"
-          value={creativity}
-          onChange={(e) => {
-            const val = parseInt(e.target.value);
-            setCreativity(val);
-            updatePersona(index, { creativity: val });
-          }}
+          value={persona.creativity}
+          onChange={handleCreativityChange}
         />
-        <span>{creativity}</span>
+        <span>{persona.creativity}</span>
       </div>
+
       <input
         type="text"
-        value={definePersona}
-        onChange={(e) => setDefinePersona(e.target.value)}
+        value={persona.definePersona}
+        onChange={handleDefinePersonaChange}
         placeholder="Define Persona"
         className="define-persona-input"
       />
-      <button className="save-persona-button" onClick={savePersona}>Save</button>
+
+      <button className="tools-button" onClick={triggerAudioTranscription}>Tools</button>
+      <input
+        type="file"
+        accept="audio/*"
+        ref={fileInputRef}
+        style={{ display: 'none' }}
+        onChange={handleAudioFileChange}
+      />
+
       <button className="remove-persona-button" onClick={removePersona}>Remove</button>
     </div>
   );

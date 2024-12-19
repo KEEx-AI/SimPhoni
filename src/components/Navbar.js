@@ -14,30 +14,30 @@ function Navbar() {
     navigate('/login');
   }
 
+  // Clicking on profile icon -> navigate to /profile-settings
+  const goToProfileSettings = () => {
+    navigate('/profile-settings');
+  };
+
   return (
     <div className="navbar">
       <div className="navbar-left">
         <NavLink to="/" className="logo">
-          <img src="/logo192.png" alt="Logo" className="logo-image" />
-          <span className="app-title">
-            SimPhon<span className="i-dot">i</span>
-          </span>
+          <img src="/SimPhoni-ISI_LOGO2.png" alt="Logo" className="logo-image" />
         </NavLink>
       </div>
       {currentUser && (
         <div className="navbar-center">
-          <NavLink to="/persona-setup" className={({isActive}) => isActive ? 'nav-item active-nav-item' : 'nav-item'}>Persona Setup</NavLink>
+          <NavLink to="/persona-setup" className={({isActive}) => isActive ? 'nav-item active-nav-item' : 'nav-item'}>Personas</NavLink>
           <NavLink to="/is-setup" className={({isActive}) => isActive ? 'nav-item active-nav-item' : 'nav-item'}>IS Setup</NavLink>
-          <NavLink to="/instruct-schemas" className={({isActive}) => isActive ? 'nav-item active-nav-item' : 'nav-item'}>Instruct Schemas</NavLink>
-          <NavLink to="/my-arrays" className={({isActive}) => isActive ? 'nav-item active-nav-item' : 'nav-item'}>My Arrays</NavLink>
+          <NavLink to="/is-schemas" className={({isActive}) => isActive ? 'nav-item active-nav-item' : 'nav-item'}>IS Schemas</NavLink>
           <NavLink to="/tools" className={({isActive}) => isActive ? 'nav-item active-nav-item' : 'nav-item'}>Tools</NavLink>
-          <NavLink to="/is-thread" className={({isActive}) => isActive ? 'nav-item active-nav-item' : 'nav-item'}>IS Thread</NavLink>
         </div>
       )}
       <div className="navbar-right">
         {currentUser ? (
           <>
-            <FaUserCircle size={24} className="profile-icon" />
+            <FaUserCircle size={36} className="profile-icon" onClick={goToProfileSettings} style={{cursor:'pointer'}} />
             <button className="logout-button" onClick={handleLogout}>Logout</button>
           </>
         ) : (

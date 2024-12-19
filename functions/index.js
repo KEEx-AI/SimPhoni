@@ -1,10 +1,4 @@
 const functions = require('firebase-functions');
-const { loadPersonaArray } = require('./loadPersonaArray');
-const { savePersonaArray } = require('./savePersonaArray');
-const { loadSchema } = require('./loadSchema');
-const { saveSchema } = require('./saveSchema');
+const { callOpenAI } = require('./callOpenAI'); // This is a new function file
 
-exports.loadPersonaArray = loadPersonaArray;
-exports.savePersonaArray = savePersonaArray;
-exports.loadSchema = loadSchema;
-exports.saveSchema = saveSchema;
+exports.callOpenAI = callOpenAI;

@@ -1,3 +1,4 @@
+/* src/components/ISSetup.css */
 .is-setup {
   padding: 60px;
   background-color: var(--color-bg-dark);
@@ -9,20 +10,20 @@
 .load-schema-buttons {
   display: flex;
   justify-content: flex-end;
-  margin-bottom: 10px;
+  margin-bottom: 20px;
 }
 
 .load-schema-button {
   padding: 10px 20px;
-  background-color: #FFA500;
-  color:#fff;
+  background-color: #229A96;
+  color:#1E003F;
   border:none;
   border-radius:5px;
   cursor:pointer;
 }
 
 .load-schema-button:hover {
-  background-color:#e69500;
+  background-color:#9DFCD3;
 }
 
 .persona-modules {
@@ -62,7 +63,7 @@
 
 .add-button {
   padding:10px 20px;
-  background-color:#32CD32;
+  background-color:#229A66;
   color:#fff;
   border:none;
   border-radius:5px;
@@ -70,5 +71,5 @@
 }
 
 .add-button:hover {
-  background-color:#28a745;
+  background-color:#9DFCD3;
 }

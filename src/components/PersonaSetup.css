@@ -8,18 +8,20 @@
 }
 
 .persona-array-name {
-  margin: 20px 0;
+  margin: 10px 0;
   display: flex;
   align-items: center;
   gap: 10px;
 }
 
 .array-name-input {
-  padding: 8px;
+  padding: 6px 8px;
   border: 1px solid var(--color-primary, #8A2BE2);
   border-radius: 4px;
   background: var(--color-bg-light, #3D004F);
-  color: var(--color-text-light, #FFFFFF);
+  color: #FFFFFF;
+  width: 300px;
+  font-size:14px;
 }
 
 .save-load-buttons {
@@ -28,27 +30,18 @@
   margin-bottom: 20px;
 }
 
-.save-button,
-.load-button {
-  padding: 10px 20px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  color: #FFFFFF;
+.clear-all-button {
+  padding: 8px 15px;
+  background:#6c757d;
+  color:#fff;
+  border:none;
+  border-radius:5px;
+  cursor:pointer;
+  font-size:14px;
 }
 
-.save-button {
-  background-color: #28a745;
-}
-.save-button:hover {
-  background-color: #218838;
-}
-
-.load-button {
-  background-color: #007bff;
-}
-.load-button:hover {
-  background-color: #0069d9;
+.clear-all-button:hover {
+  background-color:#5a6268;
 }
 
 .model-modules {
@@ -56,33 +49,24 @@
   flex-wrap: wrap;
   gap: 10px;
   margin-bottom: 20px;
-}
-
-.model-chip {
-  padding: 10px 15px;
-  background-color: var(--color-bg-light, #3D004F);
-  border: 1px solid var(--color-primary, #8A2BE2);
-  border-radius: 8px;
-  color: var(--color-text-light, #FFFFFF);
-  text-align: center;
+  border:1px solid var(--color-primary);
+  padding:10px;
+  border-radius:8px;
+  background:var(--color-bg-medium);
 }
 
 .persona-lines {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
+  /* Remove large min-height and large padding */
+  /* Previously might have large borders/padding creating space */
+  padding:10px;
+  border:1px solid var(--color-primary);
+  border-radius:8px;
+  background-color: var(--color-bg-medium);
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+  /* Remove min-height and large borders that cause spacing */
+  /* min-height:300px; - Remove this if previously set */
+  /* border:24px dashed #1E003F; - Removed large border */
 }
 
-/* src/components/PersonaSetup.css */
-.clear-all-button {
-  padding:10px 20px;
-  background-color:#6c757d;
-  color:#fff;
-  border:none;
-  border-radius:5px;
-  cursor:pointer;
-}
-
-.clear-all-button:hover {
-  background-color:#5a6268;
-}

@@ -3,22 +3,31 @@ import React, { createContext, useContext, useState } from 'react';
 
 const AppContext = createContext();
 
-export const useAppData = () => useContext(AppContext);
-
 export const AppProvider = ({ children }) => {
   const [personas, setPersonas] = useState([]);
   const [arrayName, setArrayName] = useState('');
   const [instructLines, setInstructLines] = useState([]);
-  const [selectedSPModel, setSelectedSPModel] = useState('phi3:14b-medium-128k-instruct-fp16'); // default S&P model
+  const [userSchemas, setUserSchemas] = useState([]);
+  const [profilePicture, setProfilePicture] = useState(null); // Store uploaded profile pic
+
+  const addUserSchema = (schemaData) => {
+    // schemaData should contain personaArray and instructLines
+    const id = Date.now().toString();
+    const newSchema = { id, ...schemaData };
+    setUserSchemas(prev => [...prev, newSchema]);
+  };
 
   return (
     <AppContext.Provider value={{
       personas, setPersonas,
       arrayName, setArrayName,
       instructLines, setInstructLines,
-      selectedSPModel, setSelectedSPModel
+      userSchemas, addUserSchema,
+      profilePicture, setProfilePicture
     }}>
       {children}
     </AppContext.Provider>
   );
 };
+
+export const useAppData = () => useContext(AppContext);

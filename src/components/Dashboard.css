@@ -6,11 +6,6 @@
   font-family: Arial, sans-serif;
 }
 
-.dashboard-container h1 {
-  text-align: center;
-  margin-bottom: 50px;
-}
-
 .stats-grid {
   display: flex;
   gap: 20px;
@@ -66,4 +61,78 @@
 
 .quick-links a:hover {
   color: #FF007C;
+}
+
+/* O1 demo section */
+.o1-demo-section {
+  text-align:center;
+  margin-top:40px;
+}
+
+.o1-demo-button {
+  padding: 12px 20px;
+  background: linear-gradient(90deg, #17a2b8, #1e90ff);
+  border: none;
+  border-radius:5px;
+  color:#fff;
+  cursor:pointer;
+  font-size:16px;
+  transition: background 0.3s ease;
+}
+
+.o1-demo-button:hover {
+  background: linear-gradient(90deg, #138496, #0f78d1);
+}
+
+/* O1 demo modal */
+.o1-demo-modal {
+  position:fixed;
+  top:0;
+  left:0;
+  right:0;
+  bottom:0;
+  background: rgba(0,0,0,0.6);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:9999;
+}
+
+.o1-demo-content {
+  background:#2A0036;
+  border:2px solid #8A2BE2;
+  padding:20px;
+  border-radius:8px;
+  width:70%;
+  max-width:800px;
+  color:#fff;
+  text-align:left;
+}
+
+.o1-demo-content h2 {
+  margin-top:0;
+  margin-bottom:20px;
+  border-bottom:2px solid #FF007C;
+  padding-bottom:5px;
+  color:#FF007C;
+}
+
+.o1-demo-text {
+  white-space: pre-wrap;
+  line-height:1.5;
+  margin-bottom:20px;
+}
+
+.o1-demo-content button {
+  padding:8px 15px;
+  background:#FF007C;
+  border:none;
+  border-radius:5px;
+  cursor:pointer;
+  color:#fff;
+  font-size:14px;
+}
+
+.o1-demo-content button:hover {
+  background:#e6006c;
 }
