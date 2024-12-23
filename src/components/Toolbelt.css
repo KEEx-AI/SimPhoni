@@ -1,0 +1,33 @@
+.toolbelt {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: #2A0036;
+  border: 2px solid #8A2BE2;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding: 10px;
+  z-index: 9999;
+}
+
+.tool-icon {
+  padding: 8px;
+  border: none;
+  border-radius: 4px;
+  color: #fff;
+  cursor: pointer;
+}
+
+.websearch {
+  background: #673ab7;
+}
+
+.audio {
+  background: #17a2b8;
+}
+
+.image {
+  background: #e91e63;
+}

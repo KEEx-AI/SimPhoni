@@ -1,0 +1,51 @@
+/* src/components/InferenceSequenceBuilder.css */
+
+.inference-sequence-builder {
+  padding: 20px;
+  font-family: Arial, sans-serif;
+}
+
+.inference-sequence-builder h2 {
+  margin-bottom: 20px;
+}
+
+.inference-sequence-builder button {
+  margin-right: 10px;
+  padding: 10px 15px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.inference-logs {
+  margin-top: 30px;
+}
+
+.logs-container {
+  max-height: 400px;
+  overflow-y: auto;
+  border: 1px solid #ccc;
+  padding: 10px;
+}
+
+.log-entry {
+  margin-bottom: 10px;
+  white-space: pre-wrap;
+}
+
+.log-entry.S&P {
+  background-color: #e6f7ff;
+  padding: 5px;
+  border-left: 4px solid #1890ff;
+}
+
+.log-entry.Main {
+  background-color: #fff1f0;
+  padding: 5px;
+  border-left: 4px solid #ff4d4f;
+}
+
+.log-entry.Error {
+  background-color: #fffbe6;
+  padding: 5px;
+  border-left: 4px solid #ffa940;
+}

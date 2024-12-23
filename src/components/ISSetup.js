@@ -45,7 +45,7 @@ function ISSetup() {
 
   const addInstructLine = () => {
     const newLine = {
-      id: localInstructLines.length,
+      id: `line_${Date.now()}_${localInstructLines.length}`,
       type:'instruct',
       persona:'',
       instructText:'',
@@ -57,7 +57,7 @@ function ISSetup() {
 
   const addLoopSegment = () => {
     const newLoop = {
-      id: localInstructLines.length,
+      id:`loop_${Date.now()}_${localInstructLines.length}`,
       type:'loop',
       iterations:2,
       mode:'count',
@@ -178,7 +178,7 @@ function ISSetup() {
         <h4>Available Personas:</h4>
         <div className="persona-module-container">
           {activePersonas.map((p,i)=>(
-            <PersonaModule key={i} persona={p} />
+            <PersonaModule key={p.id} persona={p} />
           ))}
         </div>
       </div>

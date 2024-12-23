@@ -1,13 +1,29 @@
 // src/services/OllamaService.js
-import { buildSPPrompt } from './SummarizationAndPromptService';
 
-const baseURL = 'http://localhost:11434/api/generate';
+import {
+  buildSPPrompt
+} from './SummarizationAndPromptService';
+import {
+  analyzeEthicalConcerns,
+  applyEthicalRevisions
+} from './EthicalGuardService';
+import {
+  analyzeCulturalSensitivity,
+  integrateCulturalFeedback
+} from './CulturalAdvisorService';
+import { selectSPModel } from './ModelRouterService';
 
+const baseURL = `${process.env.REACT_APP_OLLAMA_URL || 'http://localhost:11434'}/api/generate`;
+
+/**
+ * ollamaRunStream
+ * Streams the AI model's response from Ollama as an async generator.
+ */
 async function* ollamaRunStream(model, prompt, signal) {
   const body = { model, prompt };
   const res = await fetch(baseURL, {
-    method:'POST',
-    headers:{'Content-Type':'application/json'},
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(body),
     signal
   });
@@ -22,8 +38,8 @@ async function* ollamaRunStream(model, prompt, signal) {
   let done = false;
   let errorMsg = null;
 
-  while(!done) {
-    const {value, done:streamDone} = await reader.read();
+  while (!done) {
+    const { value, done: streamDone } = await reader.read();
     if (streamDone) break;
     const chunk = decoder.decode(value);
     const lines = chunk.split('\n').filter(l => l.trim() !== '');
@@ -32,10 +48,9 @@ async function* ollamaRunStream(model, prompt, signal) {
       try {
         obj = JSON.parse(line);
       } catch (err) {
-        console.error("Error parsing Ollama line:", line, err);
+        console.error('Error parsing line from Ollama:', line, err);
         continue;
       }
-
       if (obj.error) {
         errorMsg = obj.error;
       }
@@ -48,40 +63,69 @@ async function* ollamaRunStream(model, prompt, signal) {
       }
     }
   }
-
   if (errorMsg) {
     throw new Error(`Ollama inference error: ${errorMsg}`);
   }
 }
 
-function personaStyle(personaNickname) {
-  if (!personaNickname) return '';
-  const styles = {
-    'Wizard': 'Use mystical metaphors and poetic language.',
-    'Engineer': 'Focus on technical details, step-by-step logic.',
-    'Scientist': 'Rely on data, evidence, and structured analysis.',
-    'Policy Maker': 'Emphasize policy frameworks, international cooperation.',
-    'Artist': 'Use creative and inspiring imagery.',
-    'Teacher': 'Explain concepts simply, educational tone.',
-    'Hero': 'Brave, action-oriented, solution-focused language.',
-    'Member': 'Advisory tone, balanced perspective.',
-  };
-  const keys = Object.keys(styles);
-  for (let k of keys) {
-    if (personaNickname && personaNickname.toLowerCase().includes(k.toLowerCase())) {
-      return styles[k];
-    }
-  }
-  return 'Speak with clarity and distinct personality.';
-}
-
+/**
+ * runOllamaCommand
+ * e.g. /clear on the chosen model.
+ */
 async function runOllamaCommand(model, command, signal) {
-  // Simple function to run a single command like "/clear"
   for await (const _ of ollamaRunStream(model, command, signal)) {
-    // We don't expect output from /clear, but if it does respond, ignore.
+    // no output expected
   }
 }
 
+/**
+ * runSPInference
+ * Summarization & Prompt inference
+ */
+async function runSPInference(spModel, spParams, signal, onChar, onDone) {
+  try {
+    const spPrompt = await buildSPPrompt(spParams);
+    for await (const chunk of ollamaRunStream(spModel, spPrompt, signal)) {
+      for (const ch of chunk) {
+        onChar(ch);
+      }
+    }
+    onDone();
+  } catch (error) {
+    console.error('[runSPInference] Error:', error);
+    onDone(); // finalize
+  }
+}
+
+/**
+ * runMainInference
+ * Main persona response.
+ */
+async function runMainInference(chosenModel, mainPrompt, signal, onChar, onDone) {
+  try {
+    let ethicalFeedback = analyzeEthicalConcerns(mainPrompt);
+    if (ethicalFeedback) {
+      mainPrompt = applyEthicalRevisions(mainPrompt);
+    }
+    let culturalFeedback = analyzeCulturalSensitivity(mainPrompt);
+    let finalPrompt = integrateCulturalFeedback(mainPrompt, culturalFeedback);
+
+    for await (const chunk of ollamaRunStream(chosenModel, finalPrompt, signal)) {
+      for (const ch of chunk) {
+        onChar(ch);
+      }
+    }
+    onDone();
+  } catch (error) {
+    console.error('[runMainInference] Error:', error);
+    onDone();
+  }
+}
+
+/**
+ * processInstructLine
+ * Given an instruct line from the IS Schema, runs S&P then the main inference.
+ */
 export async function processInstructLine(
   spModel,
   line,
@@ -91,46 +135,31 @@ export async function processInstructLine(
   onMainChar,
   onMainDone
 ) {
-  const personaDescriptor = personaStyle(line.persona);
-  const spPrompt = buildSPPrompt({
-    biggerPlan:"Larger plan context placeholder: Always remember we have a multi-step process and we must keep continuity.",
-    threadSummary:"Thread summary placeholder: Summarize what has happened so far, focusing on relevant context.",
-    userInstructions: `Persona ${line.persona} instructions: ${line.instructText}\nPersona Style: ${personaDescriptor}`
-  });
+  // Build S&P prompt
+  const spParams = {
+    biggerPlan: 'Larger plan context placeholder.',
+    threadSummary: 'Thread summary placeholder.',
+    userInstructions: `Persona ${line.persona} instructions: ${line.instructText}`,
+    selectedModel: spModel // e.g. 'qwq:latest'
+  };
 
-  // Stream S&P
-  for await (const spLine of ollamaRunStream(spModel, spPrompt, signal)) {
-    for (const ch of spLine) {
-      onSPChar(ch);
-    }
-  }
-  onSPDone();
+  // 1) Summarization & Prompt
+  await runSPInference(spModel, spParams, signal, onSPChar, onSPDone);
 
-  const chosenModel = await deriveModelFromPersona(line.persona);
-
-  // Clear context before main inference
-  await runOllamaCommand(chosenModel, "/clear", signal);
-
-  const personaLabel = `[Inference(${line.persona}:${chosenModel})]:\n`;
-  for (const ch of personaLabel) {
-    onMainChar(ch);
+  // 2) Main Inference: we use line.model if it’s present
+  let chosenModel = line.model || spModel;
+  try {
+    await runOllamaCommand(chosenModel, '/clear', signal);
+  } catch (error) {
+    console.error('[processInstructLine] Could not clear context:', error);
   }
 
-  // Main prompt with persona style
-  const mainPrompt = `${spPrompt}\n\nNow ${line.persona} responds using their unique style:\n${personaDescriptor}\nUser Instructions:${line.instructText}`;
+  const mainPrompt = `
+## Persona: ${line.persona}
+Now respond according to the instructions:
+${line.instructText}
+`.trim();
 
-  for await (const mainLine of ollamaRunStream(chosenModel, mainPrompt, signal)) {
-    for (const ch of mainLine) {
-      onMainChar(ch);
-    }
-  }
-  onMainDone();
+  await runMainInference(chosenModel, mainPrompt, signal, onMainChar, onMainDone);
 }
 
-async function deriveModelFromPersona(personaNickname) {
-  return "llama3.2:3b";
-}
-
-export async function checkLoopCondition() {
-  return false;
-}

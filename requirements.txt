@@ -1,5 +1,6 @@
 fastapi==0.95.2
 uvicorn==0.22.0
 openai==0.27.9
-httpx==0.24.0
 python-dotenv==1.0.0
+whisper==20230314   # or a pinned version if you prefer
+httpx==0.24.0

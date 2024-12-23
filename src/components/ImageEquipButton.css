@@ -1,0 +1,22 @@
+.image-equip {
+  display: inline-block;
+  margin-right: 10px;
+}
+
+.image-btn {
+  padding: 8px 12px;
+  background-color: #e91e63;
+  border: none;
+  color: #fff;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.image-btn:hover {
+  background-color: #d81b60;
+}
+
+.image-error {
+  color: #ff4c4c;
+  margin-top: 5px;
+}

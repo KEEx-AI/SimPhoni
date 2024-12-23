@@ -1,0 +1,24 @@
+.extended-settings {
+  background: #1E002E;
+  color: #fff;
+  padding: 20px;
+  border: 2px solid #8A2BE2;
+  border-radius:8px;
+  font-family: Arial, sans-serif;
+  max-width:400px;
+  margin:20px auto;
+}
+
+.extended-settings label {
+  display:block;
+  margin-bottom:10px;
+}
+
+.save-btn {
+  background-color:#1e90ff;
+  color:#fff;
+  border:none;
+  border-radius:5px;
+  padding:8px 15px;
+  cursor:pointer;
+}

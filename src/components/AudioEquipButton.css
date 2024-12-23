@@ -1,0 +1,17 @@
+.audio-equip {
+  display: inline-block;
+  margin-right: 10px;
+}
+
+.audio-btn {
+  padding: 8px 12px;
+  background-color: #17a2b8;
+  border: none;
+  color: #fff;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.audio-btn:hover {
+  background-color: #138496;
+}
